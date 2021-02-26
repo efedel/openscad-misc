@@ -1,3 +1,14 @@
+$side_rake = 10;
+$side_cutting_edge = 20;
+$side_relief = 10;
+$end_cutting_edge = 10;
+$end_relief = 30;
+$back_rake = 5;
+// cross section of toolbit blank in mm
+$blank_h = 9.525; // horizontal 3/8"
+$blank_v = 9.525; // vertical 3/8"
+$blank_len = 101.6; // length of toobit *\(4")
+    
 module basic_toolbit(h, v, length){
     cube([h, length, v]);
 }
@@ -37,7 +48,30 @@ module side_face(h, v, rake, clr) {
     };
 }
 
-module back_rake(a) {
+module back_rake(h, v, b_rake, f_clr, f_rake, s_rake, s_edge, face_len) {
+    s_edge_comp = 360 - s_edge;
+
+    near_y = calc_face_near_y(h, v, f_clr, f_rake, face_len);
+    far_y = calc_face_far_y(f_rake, face_len);
+    near_x = -2;
+    far_x = calc_face_far_x(f_rake, face_len);
+
+    // TOP SHAPE 
+    adj = h - face_len;
+    opp = tan(s_edge) * adj;
+    //echo(NEAR_X=near_x,FAR_X=far_x,NEAR_Y=near_y,FAR_Y=far_y,OPP=opp);
+    inner_x = far_x; //h; //near_x + h;
+    inner_y = near_y + far_y ; //+ (-opp);
+
+    translate([inner_x, inner_y, v]) {
+        rotate([0, s_rake, s_edge_comp]) {
+            translate([0, -10, 0]) {
+                // padding: to account for rotation
+                cube([h,v*2, v * 2]);
+            };
+        };
+    };
+
 }
 
 // see calc_face_coords for unrolling
@@ -70,40 +104,48 @@ module calc_face_coords(h, v, clr, rake, face_len) {
 
 difference(){
     // cross section of toolbit in mm
-    sz_h = 9.525; // horizontal 3/8"
-    sz_v = 9.525; // vertical 3/8"
-    sz_len = 101.6; // length of toobit *\(4")
-    f_clr = 210; // 180 + 30
-    f_rake = 350;
-    s_clr = 0;
-    s_rake = 20;
+    sz_h = $blank_h;
+    sz_v = $blank_v;
+    sz_len = $blank_len;
+    f_clr = 180 + $end_relief;
+    f_rake = 360 - $end_cutting_edge;
+    s_clr = $side_relief;
+    s_edge = $side_cutting_edge;
+    s_edge_comp = 360 - $side_cutting_edge;
+    s_rake = 270 - $side_rake;
     face_len = sz_h - (sz_h / 5);
 
     basic_toolbit(sz_h, sz_v, sz_len);
     front_face(sz_h, sz_v, f_clr, f_rake);
     
-    //far_x = (tan(f_rake) * sz_h) + (tan(f_clr) * sz_v);
-    //[ [-0.5, 
-    //    near_y],
-    //  [-0.5 + (cos(rake) * face_len), 
-    //   near_y + far_y]
     near_y = calc_face_near_y(sz_h, sz_v, f_clr, f_rake, face_len);
     far_y = calc_face_far_y(f_rake, face_len);
     near_x = -2; //0.5;
     far_x = calc_face_far_x(f_rake, face_len);
+    
+    //cube([h*2, near_y, v*2]);
 
     translate([near_x + far_x, near_y + far_y, 0]) {
-        side_face(sz_h, sz_v, s_rake, s_clr);
+        side_face(sz_h, sz_v, s_edge, s_clr);
     };
     
+    back_rake(sz_h, sz_v, b_rake, f_clr, f_rake, s_rake, s_edge, face_len);
     // TOP SHAPE 
-    ht_top = 1.0;
+    adj = sz_h - face_len;
+    opp = tan(s_edge) * adj;
+    echo(NEAR_X=near_x,FAR_X=far_x,NEAR_Y=near_y,FAR_Y=far_y,OPP=opp);
+    inner_x = far_x; //h; //near_x + h;
+    inner_y = near_y + far_y ; //+ (-opp);
+
+    translate([inner_x, inner_y, v]) {
+        rotate([0, s_rake, s_edge_comp]) {
+            translate([0, -10, 0]) {
+                // padding: to account for rotation
+                //cube([sz_h,sz_v*2, sz_v * 2]);
+            };
+        };
+    };
     
-    translate([0,0,(sz_v - ht_top + 0.1)]) {
-        // NOTE: changing one of the sz_x
-        //       will add a facet (angle)
-        //cylinder(ht_top,sz_h,sz_v,$fn=3);
-    }; 
 };
 
     h = 9.525; // horizontal 3/8"
@@ -111,9 +153,9 @@ difference(){
     clr = 30; //210;
     rake = 10; // 350
     s_clr = 5;
-    s_rake = 340;
+    s_edge = 340;
     face_len = h - (h / 5);
-    b_rake = 265;
+    s_rake = 265;
 
     //y_off_clr = tan(clr) * v;
     //z_off_clr = tan(clr) * y_off_clr;
@@ -132,19 +174,21 @@ difference(){
     //cube([h, near_y, v]);
 
     adj = h - face_len;
-    //hyp = adj / cos(s_rake);
-    opp = tan(s_rake) * adj;
+    //hyp = adj / cos(s_edge);
+    opp = tan(s_edge) * adj;
     echo(NEAR_X=near_x,FAR_X=far_x,NEAR_Y=near_y,FAR_Y=far_y,OPP=opp);
-    inner_x = h; //near_x + h;
+    inner_x = far_x; //h; //near_x + h;
     // BROKE:
-    inner_y = near_y + far_y + (-opp);
+    inner_y = near_y + far_y ; //+ (-opp);
     
 
     translate([inner_x, inner_y, v]) {
-        //rotate([0, b_rake, s_rake]) {
-            // padding: to account for rotation
-            cube([h/2,v*2, v]);
-        //};
+        rotate([0, s_rake, s_edge]) {
+            translate([0, -10, 0]) {
+                // padding: to account for rotation
+                //cube([h/2,v*2, v]);
+            };
+        };
     };
 
     
