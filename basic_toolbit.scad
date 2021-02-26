@@ -81,11 +81,6 @@ function calc_face_far_y(rake, face_len) =  (tan(rake) * face_len);
 function calc_face_far_x(rake, face_len) = (cos(rake) * face_len);
 
 module calc_face_coords(h, v, clr, rake, face_len) {
-    //h = 9.525; // horizontal 3/8"
-    //v = 9.525; // vertical 3/8"
-    //clr = 30; //210;
-    //rake = 10;
-    //face_len = h - (h / 5);
     y_off_clr = tan(clr) * v;
     z_off_clr = tan(clr) * y_off_clr;
     y_off_rake = sin(rake) * face_len;
@@ -95,11 +90,11 @@ module calc_face_coords(h, v, clr, rake, face_len) {
     near_y = (tan(clr) * new_z) - new_y; 
     far_y = tan(rake) * face_len;
     // NOTE: 0.5 is from front_face()   
-    //[ [-0.5, 
-    //    near_y],
-    //  [-0.5 + (cos(rake) * face_len), 
-    //   near_y + far_y]
-    //]
+    rv = [ [-0.5, 
+        near_y],
+      [-0.5 + (cos(rake) * face_len), 
+       near_y + far_y]
+    ];
 }
 
 difference(){
@@ -113,6 +108,7 @@ difference(){
     s_edge = $side_cutting_edge;
     s_edge_comp = 360 - $side_cutting_edge;
     s_rake = 270 - $side_rake;
+    b_rake = $back_rake;
     face_len = sz_h - (sz_h / 5);
 
     basic_toolbit(sz_h, sz_v, sz_len);
@@ -129,23 +125,7 @@ difference(){
         side_face(sz_h, sz_v, s_edge, s_clr);
     };
     
-    back_rake(sz_h, sz_v, b_rake, f_clr, f_rake, s_rake, s_edge, face_len);
-    // TOP SHAPE 
-    adj = sz_h - face_len;
-    opp = tan(s_edge) * adj;
-    echo(NEAR_X=near_x,FAR_X=far_x,NEAR_Y=near_y,FAR_Y=far_y,OPP=opp);
-    inner_x = far_x; //h; //near_x + h;
-    inner_y = near_y + far_y ; //+ (-opp);
-
-    translate([inner_x, inner_y, v]) {
-        rotate([0, s_rake, s_edge_comp]) {
-            translate([0, -10, 0]) {
-                // padding: to account for rotation
-                //cube([sz_h,sz_v*2, sz_v * 2]);
-            };
-        };
-    };
-    
+    back_rake(sz_h, sz_v, b_rake, f_clr, f_rake, s_rake, s_edge, face_len);  
 };
 
     h = 9.525; // horizontal 3/8"
