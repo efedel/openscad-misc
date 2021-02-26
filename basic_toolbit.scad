@@ -7,11 +7,12 @@ $blank_len = 101.6; // [25:200]
 
 // tool angles - see tool-angle-nomeclature.png
 
+
 $side_rake = 10; //[0:35]
 $side_cutting_edge = 20; // [0:35]
 $side_relief = 0; //[0:20]
 $end_cutting_edge = 10; //[0:45]
-$end_relief = 30; // [0:20]
+$end_relief = 30; // [0:40]
 $back_rake = 5; // [-35:35]
 $nose_radius = 0; // [0]
 
@@ -21,6 +22,11 @@ $face_len = $blank_h - ($blank_h / 5); // [0:15.875]
 module basic_toolbit(h, v, length){
     cube([h, length, v]);
 }
+
+function calc_face_y_offset(h, v, clr, rake) = ((tan(clr) * v) + (tan(rake) * h) - v);
+
+function calc_face_z_offset(h, v, clr, rake) = (v + (tan(rake) * (tan(rake) * h)) + (tan(clr) * (tan(clr) * v)));
+
 // Apply end-relief (front clearance) and
 // end-cutting-edge (front rake)
 module front_face(h, v, clr, rake) {
@@ -34,6 +40,9 @@ module front_face(h, v, clr, rake) {
             
     new_y = -(y_off_clr + y_off_rake - v);
     new_z = v + z_off_rake + z_off_clr;
+    //ORIG:
+    //new_y = -calc_face_y_offset(h, v, clr,rake);
+    //new_z = calc_face_z_offset(h, v, clr,rake);
     
     translate([-2, new_y, new_z]) {
 
@@ -176,3 +185,13 @@ translate([inner_x, inner_y, $blank_v]) {
 };
 
     
+/*
+    side cutting edge 
+    side relief 15
+    end cutting edge 80
+    end relief 15
+    back rake 15-18
+    side rake 20
+    face_len ?
+    node radius 1/64
+*/
