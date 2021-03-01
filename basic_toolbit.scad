@@ -8,12 +8,12 @@ $blank_len = 101.6; // [25:200]
 // tool angles - see tool-angle-nomeclature.png
 
 
-$side_rake = 10; //[0:35]
+$side_rake = 20; //[0:35]
 $side_cutting_edge = 20; // [0:35]
 //$side_relief = 0; //[0:20]
 $side_relief = 15; //[0:20]
 $end_cutting_edge = 10; //[0:45]
-//$end_relief = 15; //30; // [0:40]
+//$end_relief =30; // [0:40]
 $end_relief = 15;// [0:40]
 $back_rake = 15; //5; // [-35:35]
 $nose_radius = 0; // [0]
@@ -121,9 +121,7 @@ module back_and_side_rake(near_x, near_y, far_x, far_y, h, v, b_rake, s_rake, s_
     translate([inner_x, inner_y, v]) {
         rotate([0, s_rake, s_edge_comp]) {
             translate([0, 0, 0]) {
-                //cube([sz_v, max(near_y, far_y), sz_h * 2]);
-                // padding: to account for rotation
-                ////cube([h,v*2, v * 2]);
+                cube([sz_v, max(near_y, far_y), sz_h * 2]);
             };
         };
     };
