@@ -16,20 +16,24 @@ module rotate_about_pt(rot, pt) {
 // cross bars
 // position (Y axis)
 // board width, height, length
-module x_frame(pos, bw, bh, bl, x_off, z_off) {
+module x_frame(pos, bw, bh, bl, x_off_old, z_off_old) {
+    new_base = bw / cos(45);
+    z_off = -(0.5 * new_base);
     
-    translate([x_off,pos,0]) {
-        rotate([0, -45, 0])
+    translate([x_off,pos,z_off]) {
+        rotate_about_pt([0, -45, 0], [0,0,0])
             cube([bw, bh, bl]);
-        
-        translate([-(2*x_off), bh, z_off])
-            rotate([0,45,0])
+    };
+     
+    translate([-(x_off + bw), pos, z_off]) {
+            rotate_about_pt([0, 45, 0], 
+                        [bw, 0, 0])
                 cube([bw, bh, bl]);
     };
 }
 
 // location of 1/2 hypotenuse on base
-x_off = (cos(45) * (0.5 * span));
+x_off = (cos(45) * ((0.5 * span) )) ;
 
 
 w_45_hyp = w2x4;
@@ -39,23 +43,29 @@ w_45_height = (cos(45) *w_45_side);
 // compensate for openscad's choice of rotation point
 z_off =w_45_side;
 
-union() {
-    x_frame(0, w2x4, h2x4, span, x_off, z_off);
-    x_frame((2*h2x4) + span, w2x4, h2x4, span, x_off, z_off);
-    x_frame((4*h2x4) + (2*span), w2x4, h2x4, span, x_off, z_off);
+difference() {
     full_len = (6*h2x4) + (2*span);
+    union() {
+        x_frame(0, w2x4, h2x4, span, x_off, z_off);
+        x_frame((2*h2x4) + span, w2x4, h2x4, span, x_off, z_off);
+        x_frame((4*h2x4) + (2*span), w2x4, h2x4, span, x_off, z_off);
     
-    translate([-x_off, 0, z_off]) {
-        translate([0.5*h2x4, 0, 0.5*w2x4])
-        rotate([0, 45, 0])
-        translate([-0.5*h2x4, 0, -0.5*w2x4])
-        cube([h2x4, full_len, w2x4]); 
-    };
+        
+    
+        translate([-x_off, 0, z_off]) {
+            rotate_about_pt([0, 45, 0], [0.5*h2x4, 0, 0.5*w2x4])
+            cube([h2x4, full_len, w2x4]); 
+        };
 
-    translate([x_off, 0, z_off]) {
-        //translate([0.5*h2x4, 0, 0.5*w2x4])
-        //rotate([0, -45, 0])
-        //translate([-0.5*h2x4, 0, -0.5*w2x4])
-        cube([h2x4, full_len, w2x4]); 
+        translate([x_off, 0, z_off]) {
+            rotate([0,-45,0])
+        //rotate_about_pt([0, -45, 0], [0.5*h2x4, 0, 0.5*w2x4])
+
+            cube([h2x4, full_len, w2x4]); 
+        };
     };
+    
+    // remove base
+    translate([-(x_off * 2),0,-z_off]) 
+        cube([4*x_off, full_len, z_off]);
 };
