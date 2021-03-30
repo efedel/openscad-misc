@@ -44,14 +44,28 @@ w_45_height = (cos(45) *w_45_side);
 z_off =w_45_side;
 
 difference() {
-    full_len = (6*h2x4) + (2*span);
+    full_len = (6*h2x4) + (2*log_len);
     union() {
+        // x fame
         x_frame(0, w2x4, h2x4, span, x_off, z_off);
-        x_frame((2*h2x4) + span, w2x4, h2x4, span, x_off, z_off);
-        x_frame((4*h2x4) + (2*span), w2x4, h2x4, span, x_off, z_off);
+        x_frame((2*h2x4) + log_len, w2x4, h2x4, span, x_off, z_off);
+        x_frame((4*h2x4) + (2*log_len), w2x4, h2x4, span, x_off, z_off);
     
+        // side braces
+        brace_z_off = x_off - z_off ;
+        translate([-((cos(45)*w2x4) + (2*h2x4)), -h2x4, brace_z_off]) {
+            rotate_about_pt([15, 45, 0], 
+                            [(0.5*w2x4), full_len, (0.5*h2x4)])
+            cube([h2x4, full_len, w2x4]); 
+        }
         
-    
+        translate([cos(45)*w2x4 + (0.5*h2x4), -h2x4, brace_z_off + h2x4]) {
+            rotate_about_pt([-15, -45, 0], 
+                            [(0.5*w2x4), 0, (0.5*h2x4)])
+            cube([h2x4, full_len, w2x4]); 
+        }
+        
+        // bottom braces
         translate([-x_off, 0, z_off]) {
             rotate_about_pt([0, 45, 0], [0.5*h2x4, 0, 0.5*w2x4])
             cube([h2x4, full_len, w2x4]); 
@@ -59,10 +73,10 @@ difference() {
 
         translate([x_off, 0, z_off]) {
             rotate([0,-45,0])
-        //rotate_about_pt([0, -45, 0], [0.5*h2x4, 0, 0.5*w2x4])
-
             cube([h2x4, full_len, w2x4]); 
         };
+        
+        
     };
     
     // remove base
