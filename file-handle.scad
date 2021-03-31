@@ -24,37 +24,17 @@ module base_handle(c_rad, c_len, sides) {
 
 module pommel(r, pos) {
     translate([0, pos, 0]) {
-        difference() {
+        //difference() {
             sphere(r=r);
-            //translate([0, pos + pos, 0]);
-            //cube([16, r*2, 18]);
-        };
+            //cylinder(r1=(r* 0.4), r2=(r * 0.4), h=(r*4), $fn=7);
+        //};
     };
 }
 
-module palm_bulb(sz_palm, palm_rad) {
-    // TODO: sphere of palm0bulge size removed from cube
-    //translate([($length - sz_palm), -palm_rad, 0]) {
-    //translate([0, sz_palm, 0]) {
-    /*
-    rotate([90,0,0]) {
-        rotate_extrude(convexity=10, $fn = 100) {
-            translate([0, sz_palm, 0]) {
-                difference() {    
-                    square(2*palm_rad);
-                    translate([palm_rad, 0]) {
-                        circle(r=palm_rad);
-                    };
-                };
-            };
-       };
-    };*/
-    difference() {
-        cube([(2*palm_rad) + 0.5, sz_palm, (2*palm_rad )+ 0.5]);
-        translate([palm_rad, palm_rad, palm_rad]) {
-            scale([1.0,2.75,0.85]) {
-                sphere(r=palm_rad);
-            };
+module palm_bulb(y_offset, palm_rad) {
+    translate([0, y_offset, 0]) {
+        scale([0.80,1.95,0.80]) {
+            sphere(r=palm_rad);
         };
     };
 }
@@ -78,22 +58,21 @@ difference() {
     translate([$diameter, 0, 0]) {
         union() {
             base_handle(cyl_rad, cyl_len, 8);   
-            translate([0, hilt_width + 47, 0]) {
-                scale([0.80,1.95,0.80]) {
-                    sphere(r=21);
-                };
-            };
+            palm_bulb(hilt_width + 47, 21);
             pommel(pom_rad, $length-(2* pom_rad));
         };
     };
 
     thumb_groove(hilt_width);
     
-    translate([$diameter-20.5, hilt_width + 20, -20.5]) {
-        //palm_bulb(52, 20.5);
-    };
     // grip cutouts
-    // pommel hole
+    // 12.times
     
+    // pommel hole
+    translate([$diameter, $length-(2* pom_rad), -(pom_rad*2)]) {
+        cylinder(r1=(pom_rad* 0.4), r2=(pom_rad * 0.4), h=(pom_rad*4), $fn=7);
+
+    };
 };
 
+// TODO: grip cutout
