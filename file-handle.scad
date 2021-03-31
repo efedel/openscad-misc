@@ -3,6 +3,8 @@
 // 2.5 : 63.5
 $length = 110; //114.3;
 $diameter = 28.75; //38.1; //1.5"
+$shank = 3.175; // 1/8"
+$shank_len = 40;
 
 
 // width of hilt: 7.75
@@ -73,6 +75,13 @@ difference() {
         cylinder(r1=(pom_rad* 0.4), r2=(pom_rad * 0.4), h=(pom_rad*4), $fn=7);
 
     };
+    
+    // hole for file
+    translate([$diameter, -0.05, 0]) {
+        rotate([270, 0, 0]) {
+            cylinder(r1=$shank, r2=($shank *0.75), h=$shank_len);
+        };
+    }
 };
 
 // TODO: grip cutout
