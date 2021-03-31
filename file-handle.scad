@@ -51,10 +51,17 @@ module thumb_groove(hilt_width) {
                     circle(r=circ_rad, $fn=100);
 }
 
+
+
 pom_rad = 14;
 cyl_len = ($length - (2 *  pom_rad));
 cyl_rad = $diameter / 2;
 hilt_width = 7.75;
+ridge_width = 3.25;
+t_width = 2.75;
+t_depth = 20; // trough depth
+cyl_3rd_dia = $diameter / 3;
+
 
 difference() {
     translate([$diameter, 0, 0]) {
@@ -70,6 +77,39 @@ difference() {
     // grip cutouts
     // 12.times
     
+    translate([$diameter, hilt_width, 0]) {
+        for (i = [0 : 10]) {   
+            translate([-cyl_rad, i*(ridge_width + 2.75), 0]) {
+                
+                // LEFT
+                translate([-ridge_width, 0, 0]) {
+                    translate([0,0,$shank]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); // top
+                    translate([0,0,-($shank + t_depth)]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); //bottom
+                };
+                    
+                //CENTER
+                translate([cyl_3rd_dia, 0, 0]) {
+                    translate([0,0,$shank]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); // top
+                    translate([0,0,-($shank + t_depth)]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); //bottom
+                };
+                
+                // RIGHT
+                translate([(2*cyl_3rd_dia)+ridge_width, 0, 0]) {
+                    translate([0,0,$shank]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); // top
+                    translate([0,0,-($shank + t_depth)]) 
+                        cube([cyl_3rd_dia, t_width, t_depth]); //bottom
+                };
+           
+            };
+        }
+    };
+    
+    
     // pommel hole
     translate([$diameter, $length-(2* pom_rad), -(pom_rad*2)]) {
         cylinder(r1=(pom_rad* 0.4), r2=(pom_rad * 0.4), h=(pom_rad*4), $fn=7);
@@ -84,4 +124,3 @@ difference() {
     }
 };
 
-// TODO: grip cutout
