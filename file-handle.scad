@@ -109,10 +109,23 @@ difference() {
         }
     };
     
+    // clean up pommel
+    translate([$diameter, $length-(2* pom_rad) - 3, 0]) {
+        rotate([90,0,0]) {
+            rotate_extrude(convexity=10, $fn = 100)   {     
+                translate([($diameter* 0.6), 0, 0]) {
+                    circle(r=4, $fn=100);
+                }
+            }
+        }
+    }
     
     // pommel hole
     translate([$diameter, $length-(2* pom_rad), -(pom_rad*2)]) {
-        cylinder(r1=(pom_rad* 0.4), r2=(pom_rad * 0.4), h=(pom_rad*4), $fn=7);
+        rotate([0,0,90])
+            cylinder(r1=(pom_rad* 0.4), 
+                    r2=(pom_rad * 0.4), 
+                    h=(pom_rad*4), $fn=7);
 
     };
     
@@ -123,4 +136,3 @@ difference() {
         };
     }
 };
-
