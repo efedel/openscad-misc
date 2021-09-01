@@ -15,31 +15,33 @@ lcd_x_len = 20;
 lcd_y_len = 25.75;
 control_y = 14.75;
 
+// back
+back_height = wall_thickness;
 
 
-// front
-module front_outside() {
+
+module outside(height) {
     difference() {
         union() {
             cube([board_x + (2* wall_thickness),
                 board_y + (2 * wall_thickness),
-                    front_height + wall_thickness]);
-            cylinder(r=corner_rad, h=(front_height+wall_thickness), $fn=66);
-            translate([board_x + (2*wall_thickness), 0, 0]) cylinder(r=corner_rad, h=(front_height+wall_thickness), $fn=66);
-            translate([0, board_y + (2*wall_thickness), 0]) cylinder(r=corner_rad, h=(front_height+wall_thickness), $fn=66);
-            translate([board_x + (2*wall_thickness), board_y + (2*wall_thickness), 0]) cylinder(r=corner_rad, h=(front_height+wall_thickness), $fn=66);           
+                    height + wall_thickness]);
+            cylinder(r=corner_rad, h=(height+wall_thickness), $fn=66);
+            translate([board_x + (2*wall_thickness), 0, 0]) cylinder(r=corner_rad, h=(height+wall_thickness), $fn=66);
+            translate([0, board_y + (2*wall_thickness), 0]) cylinder(r=corner_rad, h=(height+wall_thickness), $fn=66);
+            translate([board_x + (2*wall_thickness), board_y + (2*wall_thickness), 0]) cylinder(r=corner_rad, h=(height+wall_thickness), $fn=66);           
         }
-        cylinder(r=1.3, h=(front_height + wall_thickness + 0.01), $fn=66);
-        translate([board_x + (2*wall_thickness), 0, 0]) cylinder(r=1.3, h=(front_height + wall_thickness + 0.01), $fn=66);
-        translate([0, board_y + (2*wall_thickness), 0]) cylinder(r=1.3, h=(front_height + wall_thickness + 0.01), $fn=66);
-        translate([board_x + (2*wall_thickness), board_y + (2*wall_thickness), 0]) cylinder(r=1.3, h=(front_height + wall_thickness + 0.01), $fn=66);
+        cylinder(r=1.3, h=(height + wall_thickness + 0.01), $fn=66);
+        translate([board_x + (2*wall_thickness), 0, 0]) cylinder(r=1.3, h=(height + wall_thickness + 0.01), $fn=66);
+        translate([0, board_y + (2*wall_thickness), 0]) cylinder(r=1.3, h=(height + wall_thickness + 0.01), $fn=66);
+        translate([board_x + (2*wall_thickness), board_y + (2*wall_thickness), 0]) cylinder(r=1.3, h=(height + wall_thickness + 0.01), $fn=66);
     
     }
 }
 
 module front() {
     difference() {
-        front_outside();
+        outside(front_height);
     
         //lcd hole
         translate([wall_thickness + lcd_hole_x, 
@@ -92,4 +94,32 @@ module front() {
 
 }
 
-front();
+module back() {
+    difference() {
+        union() {
+        
+            outside(back_height);
+   
+            translate([wall_thickness, wall_thickness, wall_thickness])
+                cube([board_x, board_y, 4]);
+        }
+        
+        
+        translate([wall_thickness + 2, wall_thickness + 2, wall_thickness])
+                cube([board_x - 4, board_y - 4, 4]);
+        
+        // vents!
+        for ( i = [0:1:5] ) {
+                translate([wall_thickness + ((board_x - 11) / 2) + (i * 2), wall_thickness + (board_y / 4.0), -0.1])
+                cube([1, board_y / 2.0, wall_thickness +  0.1 ]);
+        }
+        
+        // TODO: housing for sensor at far Y. union.
+        // TODO: standoffs to hold board in place
+
+    }
+}
+
+//front();
+//translate([-50, 0, 0])
+    back();
