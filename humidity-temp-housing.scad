@@ -1,18 +1,18 @@
 
-board_x = 25.57;
-board_y = 50.31;
-wall_thickness = 2.25;
+board_x = 25.57 + 0.2;
+board_y = 50.31 + 0.2;
+wall_thickness = 2;
 corner_rad = 7.0 / 2;
 front_height = 17;
-lcd_ridge_height = 4; //4.5;
+lcd_ridge_height = 1.5; //4.5;
 lcd_hole_x_len = 15.0;
-lcd_hole_y_len = 23.0;
-lcd_hole_x = 4.35;
-lcd_hole_y = 7;
+lcd_hole_y_len = 23.4;
+lcd_hole_x = 1.5; //4.35;
+lcd_hole_y = 6.6; //7;
 lcd_x_frame = 2.5;
 lcd_y_frame = 6.0;
 lcd_x_len = 20;
-lcd_y_len = 25.75;
+lcd_y_len = 25; //25.75;
 control_y = 14.75;
 
 // back
@@ -119,7 +119,10 @@ module back() {
 
     }
 }
-
-//front();
+difference() {
+front();
+    translate([-5, -5, 5])
+        cube([board_x * 2, board_y * 2, front_height * 2]);
+}
 //translate([-50, 0, 0])
-    back();
+    //back();
