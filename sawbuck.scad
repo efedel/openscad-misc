@@ -52,6 +52,7 @@ difference() {
         x_frame((4*h2x4) + (2*log_len), w2x4, h2x4, span, x_off, z_off);
     
         // side braces
+        // FIXME: these are fudged
         brace_z_off = x_off - z_off ;
         translate([-((cos(45)*w2x4) + (2*h2x4)), -h2x4, brace_z_off]) {
             rotate_about_pt([15, 45, 0], 

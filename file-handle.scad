@@ -3,7 +3,9 @@
 // 2.5 : 63.5
 $length = 110; //114.3;
 $diameter = 28.75; //38.1; //1.5"
-$shank = 3.175; // 1/8"
+// hole for tang:
+$shank = 8.75; // 3.175; // 1/8"
+$shank_minor = 5; // 2.38
 $shank_len = 40;
 
 
@@ -75,8 +77,6 @@ difference() {
     thumb_groove(hilt_width);
     
     // grip cutouts
-    // 12.times
-    
     translate([$diameter, hilt_width, 0]) {
         for (i = [0 : 10]) {   
             translate([-cyl_rad, i*(ridge_width + 2.75), 0]) {
@@ -132,7 +132,7 @@ difference() {
     // hole for file
     translate([$diameter, -0.05, 0]) {
         rotate([270, 0, 0]) {
-            cylinder(r1=$shank, r2=($shank *0.75), h=$shank_len);
+            cylinder(r1=($shank * 0.5), r2=($shank_minor * 0.5), h=$shank_len);
         };
     }
 };
