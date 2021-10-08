@@ -25,6 +25,9 @@ cyl_cutout_dia = cyl_dia - (mm_per_inch * 0.16);
 cyl_z = base_z + (total_height / 2);
 cyl_offset = mm_per_inch * 0.25;
 
+hose_dia = mm_per_inch * 0.6875; // rally 5/8e
+hose_wall_dia = hose_dia + (mm_per_inch * 0.125);
+
 echo("BASE", base_side_len);
 echo("GRILL PAD", grill_pad);
 echo("GRILL ORIGIN", grill_origin);
@@ -72,6 +75,7 @@ module grill() {
 }
 
 difference() {
+    // basic grill cover
     union() {
         difference() {
             plate();
@@ -79,7 +83,11 @@ difference() {
                 grill();
             }
         }
+        // hose hole wall
+        translate([0, 0, base_z + (total_height / 2)])
+            cylinder(d=hose_wall_dia, h=total_height, $fn=99, center=true);
          
+        // bolt hole walls
         translate([-(base_side_len/ 2) + cyl_offset, 0, cyl_z - 0.01]) {
             bolt_mount(-cyl_offset);
         }
@@ -87,7 +95,12 @@ difference() {
             bolt_mount(cyl_offset);
         }
     }
-    // axtual 1/4" bolt holes
+    
+    // 3/4" hose hole
+        translate([0, 0, base_z + (total_height / 2)])
+            cylinder(d=hose_dia, h=total_height, $fn=99, center=true);
+    
+    //  1/4" bolt holes
     translate([-(base_side_len/ 2) + cyl_offset, 0, cyl_z - 0.01])
         cylinder(d=hole_dia+0.01, h=total_height, center=true, $fn=99);
     translate([(base_side_len/ 2) - cyl_offset, 0, cyl_z - 0.01]) 
