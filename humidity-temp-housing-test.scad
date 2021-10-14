@@ -15,12 +15,7 @@ lcd_x_len = 20;
 lcd_y_len = 25; //25.75;
 control_y = 17; //14.75;
 
-// back
 back_height = wall_thickness;
-
-//TODO:
-// ledge for sensor (w/ bolt-hole)
-// grid for sensor intake
 
 // NOTE: this is from top of base piece
 standoff_height = 12.0; //12mm to circuit board
@@ -29,12 +24,11 @@ standoff_y = 1.5; // less than 2mm
 standoff_z = standoff_height + 4; 
 standoff_a_y = 3.0; // 3mm
 standoff_b_y = 16.5; // 16.5mm
-//sensor_z = 8.2; // 8mm
-sensor_z = 4.5; //standoff_height - 1.0;
+sensor_z = 4.5; //standoff_height - 1.0; // 8mm
 sensor_x = 15; // 15mm
 sensor_y = 30.2; // 30mm
-sensor_hole_dia = 2.5; //3; // 2.75mm;
-sensor_hole_x = sensor_x - 6.75 - (sensor_hole_dia / 2) + 0.25;
+sensor_peg_dia = 2.5; //3; // 2.75mm;
+sensor_peg_x = sensor_x - 6.75 - (sensor_peg_dia / 2) + 0.25 + 1.21; // 1.21 : correction by measurement
 peg_len = 3.0;
 
 module outside(height) {
@@ -88,10 +82,11 @@ module front() {
             cylinder(d=4, h=wall_thickness+0.1, $fn=33);
             
         // rst: 2mm dia @ (board_x - 4.47),(board_y-3.5)
-        translate([wall_thickness + board_x - 4.5, // + 1, 
+        translate([wall_thickness + board_x - 4.5,  
                    wall_thickness + board_y - 3.5, 
                    -0.1])
             cylinder(d=4, h=wall_thickness+0.1, $fn=33);
+            
         // usb: 9.25mm from either edge, 3.25 high
         translate([wall_thickness + 8.25, 
                    wall_thickness + board_y -0.01, wall_thickness])
@@ -112,30 +107,30 @@ module front() {
 
 }
 module standoffs() {
-    translate([wall_thickness+(board_x / 2)-(standoff_x / 2), standoff_a_y, 0])
-        cube([standoff_x, standoff_y, standoff_z]);
+    translate([wall_thickness, standoff_a_y-1, 0])
+        cube([(board_x / 2)+(standoff_x / 2), standoff_y+1, standoff_z]);
     
     translate([wall_thickness+sensor_x - 3, board_y - standoff_b_y, 0])
-        cube([standoff_x, standoff_y, standoff_z]);
+        cube([standoff_x+5.5, standoff_y, standoff_z]);
 }
 
 module ledge() {
             translate([wall_thickness,
                wall_thickness,
                wall_thickness + standoff_z - sensor_z])
-                cube([wall_thickness+sensor_x, wall_thickness+sensor_y, standoff_y]);
+                cube([wall_thickness+4, sensor_y / 2, standoff_y + 1]);
+ 
             translate([wall_thickness,
                wall_thickness,
                wall_thickness])
                 cube([wall_thickness, sensor_y / 2, standoff_z - sensor_z]); 
-        translate([ wall_thickness + sensor_hole_x,
+
+        translate([ wall_thickness + sensor_peg_x,
                 wall_thickness + 4 + 21.5,
-               wall_thickness + standoff_z - sensor_z - peg_len])
-        cylinder(d=sensor_hole_dia, h=peg_len, $fn=99);
+               wall_thickness])
+        cylinder(d=sensor_peg_dia, h=peg_len, $fn=99);
 }
 
-// TODO: flat back
-//       holes for sensor
 module back_face() {
 
     difference() {
@@ -153,27 +148,21 @@ module back_face() {
                 cube([board_x - 4, board_y - 4, 4]);
         
         // vents!
-        for ( i = [0:1:7] ) {
-            translate([wall_thickness + ((board_x - 15) / 2) + (i * 2), board_y - standoff_b_y + standoff_y + 1, -0.1])
+        for ( i = [0:1:9] ) {
+            translate([wall_thickness + ((board_x - 17) / 2) + (i * 2), board_y - standoff_b_y + standoff_y + 1, -0.1])
                 cube([1, board_y / 4.0, wall_thickness +  0.1 ]);
             
-            //translate([wall_thickness + ((board_x - 11) / 2) + (i * 2), wall_thickness + 4 + standoff_y + 1, -0.1])
-                //cube([1, board_y / 4.0, wall_thickness +  0.1 ]);
         }
         
         // sensor cutout
         translate([wall_thickness + 2, wall_thickness+2.6, -0.1])
             cube([13, 17, wall_thickness+4]);
-
-  
-
-/*
+        
         // vents!
-        for ( i = [0:1:5] ) {
-                translate([wall_thickness + ((board_x - 11) / 2) + (i * 2), wall_thickness + (board_y / 4.0), -0.1])
-                cube([1, board_y / 2.0, wall_thickness +  0.1 ]);
+        for ( i=[1:1:4] ) {
+            translate([wall_thickness + 14.5 + (i*2), wall_thickness+2.6, -0.1])
+                cube([1, 17, wall_thickness +  0.1 ]);
         }
-*/
 
     }
 }
@@ -183,14 +172,15 @@ module back() {
         back_face();
         standoffs();
         ledge();
+        
+        
     }
 }
 
-/*difference() {
-    front();
-    
-    //translate([-5, -5, 5])
-    //    cube([board_x * 2, board_y * 2, //front_height * 2]);
-}*/
-//translate([-50, 0, 0])
-    back();
+// uncomment to print front:
+front();    
+
+// to print front and back on same STL:
+translate([-50, 0, 0])
+  // uncomment to print housing back:
+  back();
