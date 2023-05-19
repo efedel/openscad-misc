@@ -28,7 +28,7 @@ sensor_z = 4.5; //standoff_height - 1.0; // 8mm
 sensor_x = 15; // 15mm
 sensor_y = 30.2; // 30mm
 sensor_peg_dia = 2.5; //3; // 2.75mm;
-sensor_peg_x = sensor_x - 6.75 - (sensor_peg_dia / 2) + 0.25 + 1.21; // 1.21 : correction by measurement
+sensor_peg_x = sensor_x - 6.75 - (sensor_peg_dia / 2) + 0.25 + 1.61; // 1.61 : correction by measurement
 peg_len = 3.0;
 
 module outside(height) {

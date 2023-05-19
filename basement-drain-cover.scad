@@ -19,14 +19,18 @@ rect_x = mm_per_inch * 0.25;
 rect_x_pad = mm_per_inch * 0.285; //0.1586;
 rect_y_pad = mm_per_inch * 0.185;
 
+// holes to far in by 0.13 (1/8)
+// holes dia .1420 but only .1200 clearance
+// -> translate -0.225
+hole_fixup = mm_per_inch * 0.045; // was 0.0225
 cyl_dia = mm_per_inch * 0.4645;
-hole_dia = mm_per_inch * 0.25;
+hole_dia = (mm_per_inch * 0.142) + 0.02;
 cyl_cutout_dia = cyl_dia - (mm_per_inch * 0.16);
 cyl_z = base_z + (total_height / 2);
 cyl_offset = mm_per_inch * 0.25;
 
-hose_dia = mm_per_inch * 0.6875; // rally 5/8e
-hose_wall_dia = hose_dia + (mm_per_inch * 0.125);
+hose_dia = (mm_per_inch * 0.715) + 0.02; //0.6875; // really 5/8e
+hose_wall_dia = hose_dia + (mm_per_inch * 0.25);
 
 echo("BASE", base_side_len);
 echo("GRILL PAD", grill_pad);
@@ -101,8 +105,8 @@ difference() {
             cylinder(d=hose_dia, h=total_height, $fn=99, center=true);
     
     //  1/4" bolt holes
-    translate([-(base_side_len/ 2) + cyl_offset, 0, cyl_z - 0.01])
+    translate([-(base_side_len/ 2) + cyl_offset - hole_fixup, 0, cyl_z - 0.01])
         cylinder(d=hole_dia+0.01, h=total_height, center=true, $fn=99);
-    translate([(base_side_len/ 2) - cyl_offset, 0, cyl_z - 0.01]) 
+    translate([(base_side_len/ 2) - cyl_offset + hole_fixup, 0, cyl_z - 0.01]) 
         cylinder(d=hole_dia+0.01, h=total_height, center=true, $fn=99);
 }
